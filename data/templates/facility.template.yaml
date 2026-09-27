@@ -1,0 +1,87 @@
+# Facility template. Copy to data/facilities/<id>.yaml and fill in.
+# Rules: unknown is the string "unknown". Dates are YYYY-MM-DD or null.
+# Do not put numbers here. Numbers are claims and live in data/claims/<id>.yaml with a source.
+
+id: example-city-developer          # stable, lowercase kebab-case, never change after publish
+name: Example City Data Center      # what locals call it
+aliases:
+  - Project Codename
+  - Developer Name campus
+developer: Developer Name
+operator: unknown
+status: proposed                    # proposal_pending | proposed | announced | under_construction | operational | on_hold | canceled | denied
+
+location:
+  address: unknown
+  city: Example City
+  county: Example County
+  lat: null
+  lng: null
+
+jurisdiction:
+  municipality: City of Example
+  agenda_url: unknown
+
+utility:
+  electric: unknown                 # We Energies, Alliant, MGE, WPS, co-op name
+  water: unknown                    # municipal utility name, private high-capacity well, Lake Michigan, unknown
+
+dockets: []
+# - agency: PSC
+#   number: "0000-XX-000"
+#   url: https://apps.psc.wi.gov/...
+# - agency: DNR
+#   number: "HCW-000000"
+#   url: https://...
+
+watershed:
+  basin: unknown
+  wri_water_stress: unknown         # basin-level only, from WRI Aqueduct
+
+first_seen: 2026-09-27
+last_reviewed: 2026-09-27
+notes: ""
+
+# ---------------------------------------------------------------
+# Matching claims file: data/claims/example-city-developer.yaml
+# ---------------------------------------------------------------
+# facility: example-city-developer
+# claims:
+#   - id: example-city-developer-power_capacity_mw-1
+#     claim_type: power_capacity_mw
+#     value: 300
+#     unit: MW
+#     qualifier: at full build-out
+#     as_of: 2026-06-01
+#     source: wisconsinwatch-2026-06-01-example
+#     evidence_type: reported
+#     method: null
+#     conflicts_with: []
+#     superseded_by: null
+#     notes: ""
+#   - id: example-city-developer-water_withdrawal_gpd-1
+#     claim_type: water_withdrawal_gpd
+#     value: unknown
+#     unit: gpd
+#     qualifier: ""
+#     as_of: null
+#     source: tracker-2026-09-27-no-disclosure
+#     evidence_type: unknown
+#     method: null
+#     conflicts_with: []
+#     superseded_by: null
+#     notes: "No water figure in any public record as of last_reviewed."
+
+# ---------------------------------------------------------------
+# Matching events file: data/events/example-city-developer.yaml
+# ---------------------------------------------------------------
+# facility: example-city-developer
+# events:
+#   - id: example-city-developer-2026-05-14-vote
+#     date: 2026-05-14
+#     type: vote
+#     title: Plan Commission approves rezoning
+#     body: Commission voted 5–2 to rezone 400 acres from agricultural to industrial.
+#     outcome: approved
+#     source: example-city-2026-05-14-minutes
+#     evidence_type: government_record
