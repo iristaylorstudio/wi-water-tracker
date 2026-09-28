@@ -1,0 +1,18 @@
+facility: example-city-b
+events:
+  - id: example-city-b-2026-04-02-announcement
+    date: 2026-04-02
+    type: announcement
+    title: Developer announces campus
+    body: Example Developer B announced a proposed campus in Example City B.
+    outcome: null
+    source: example-developer-b-2026-04-02-press-release
+    evidence_type: company_statement
+  - id: example-city-b-2026-07-20-news
+    date: 2026-07-20
+    type: news
+    title: News report gives a different water figure
+    body: Example News reported a peak water withdrawal figure higher than the developer's.
+    outcome: null
+    source: example-news-2026-07-20-city-b-water
+    evidence_type: reported

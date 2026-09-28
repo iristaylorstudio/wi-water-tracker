@@ -1,0 +1,76 @@
+facility: example-city-b
+claims:
+  - id: example-city-b-water_withdrawal_gpd-1
+    claim_type: water_withdrawal_gpd
+    value: 250000
+    unit: gpd
+    qualifier: annual average
+    as_of: 2026-04-02
+    source: example-developer-b-2026-04-02-press-release
+    evidence_type: company_statement
+    method: null
+    conflicts_with:
+      - example-city-b-water_withdrawal_gpd-2
+    superseded_by: null
+    notes: ""
+  - id: example-city-b-water_withdrawal_gpd-2
+    claim_type: water_withdrawal_gpd
+    value: 1200000
+    unit: gpd
+    qualifier: peak
+    as_of: 2026-07-20
+    source: example-news-2026-07-20-city-b-water
+    evidence_type: reported
+    method: null
+    conflicts_with:
+      - example-city-b-water_withdrawal_gpd-1
+    superseded_by: null
+    notes: ""
+  - id: example-city-b-water_consumption_gpd-1
+    claim_type: water_consumption_gpd
+    value: unknown
+    unit: gpd
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-b-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-b-water_source-1
+    claim_type: water_source
+    value: unknown
+    unit: null
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-b-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-b-cooling_type-1
+    claim_type: cooling_type
+    value: unknown
+    unit: null
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-b-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-b-cooling_water_reuse-1
+    claim_type: cooling_water_reuse
+    value: unknown
+    unit: null
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-b-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
