@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Set under Settings → Secrets and variables → Actions → Variables.
+      # Empty is fine: the site builds with a "form not configured" placeholder.
+      PUBLIC_TALLY_FORM_URL: ${{ vars.PUBLIC_TALLY_FORM_URL }}
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v7
+      - name: Validate data and build with Astro
+        # Runs `npm run build`, which runs `npm run validate` first.
+        uses: withastro/action@v6
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
