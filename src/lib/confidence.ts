@@ -2,11 +2,13 @@
 //
 // Claim confidence:
 //   High   – filing or government_record, dated within 18 months, no open conflict
-//   Medium – company_statement or reported, or a filing older than 18 months, no open conflict
+//   Medium – company_statement or reported, or a filing or government_record older than
+//            18 months or undated, no open conflict
 //   Low    – researcher_estimate or modeled, or any claim with an open conflict
 //   None   – unknown
 //
-// Facility water confidence is the weakest of its water claims.
+// Facility water confidence is the weakest among water claims that have a value.
+// Unknown claims are counted separately, not folded into the confidence.
 
 import type { Claim, ClaimType } from './loadData';
 
@@ -22,6 +24,7 @@ export const WATER_CLAIM_TYPES: ClaimType[] = [
   'water_withdrawal_gpd',
   'water_consumption_gpd',
   'water_source',
+  'cooling_type',
   'cooling_water_reuse',
 ];
 
@@ -75,11 +78,23 @@ export function weakest(levels: Confidence[]): Confidence {
   return levels.reduce((a, b) => (RANK[b] < RANK[a] ? b : a));
 }
 
+const currentWaterClaims = (claims: Claim[]) =>
+  claims.filter((c) => WATER_CLAIM_TYPES.includes(c.claim_type) && !isSuperseded(c));
+
 /**
- * Weakest confidence across the facility's current (not superseded) water claims.
- * No water claims at all is None.
+ * Weakest confidence among the facility's current water claims that have a value.
+ * None only when every water claim is unknown, or there are none.
  */
 export function facilityWaterConfidence(claims: Claim[], now: Date = new Date()): Confidence {
-  const water = claims.filter((c) => WATER_CLAIM_TYPES.includes(c.claim_type) && !isSuperseded(c));
-  return weakest(water.map((c) => claimConfidence(c, claims, now)));
+  const known = currentWaterClaims(claims)
+    .map((c) => claimConfidence(c, claims, now))
+    .filter((level) => level !== 'None');
+  return weakest(known);
+}
+
+/** For "3 of 5 water facts not disclosed." */
+export function waterDisclosure(claims: Claim[]): { unknown: number; total: number } {
+  const water = currentWaterClaims(claims);
+  const unknown = water.filter((c) => c.evidence_type === 'unknown' || c.value === 'unknown').length;
+  return { unknown, total: water.length };
 }

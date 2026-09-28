@@ -38,11 +38,21 @@ Keeping claims and events in separate files from the facility keeps the facility
 Derived, not typed by hand. A claim's confidence is:
 
 - **High**: `filing` or `government_record`, dated within 18 months, no open conflict
-- **Medium**: `company_statement` or `reported`, or a `filing` older than 18 months, no open conflict
+- **Medium**: `company_statement` or `reported`, or a `filing` or `government_record` older than 18 months or with no `as_of` date, no open conflict
 - **Low**: `researcher_estimate` or `modeled`, or any claim with an open conflict
 - **None**: `unknown`
 
-A facility's overall water confidence is the weakest of its water claims. Show that on the map pin.
+Age is measured from the build date. A claim can move from High to Medium on a later build without any data change.
+
+A conflict is open when a claim and a claim it conflicts with are both current, meaning neither has `superseded_by` set. The link counts in either direction: if A lists B in `conflicts_with`, both A and B have an open conflict.
+
+### Facility water confidence
+
+Water claims are `water_withdrawal_gpd`, `water_consumption_gpd`, `water_source`, `cooling_type` and `cooling_water_reuse`. Superseded claims are ignored.
+
+A facility's water confidence is the weakest confidence among its water claims that have a value. `unknown` claims are left out of this. It is None only when every water claim is `unknown` or there are none. Show it on the map pin. The pin answers "how solid is what we know," not "is anything missing."
+
+Missing water facts are counted separately and shown on the facility page, for example "3 of 5 water facts not disclosed."
 
 ## facility.yaml
 
