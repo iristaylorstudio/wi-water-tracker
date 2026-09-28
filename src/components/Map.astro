@@ -1,0 +1,150 @@
+---
+import { CONFIDENCE_COLORS, CONFIDENCE_LEVELS, type Confidence } from '../lib/confidence';
+
+export interface MapPin {
+  id: string;
+  name: string;
+  developer: string;
+  status: string;
+  lat: number;
+  lng: number;
+  confidence: Confidence;
+  href: string;
+}
+
+interface Props {
+  pins: MapPin[];
+}
+
+const { pins } = Astro.props;
+---
+
+<div class="map-wrap">
+  <div
+    class="map"
+    data-pins={JSON.stringify(pins)}
+    data-colors={JSON.stringify(CONFIDENCE_COLORS)}
+    role="region"
+    aria-label="Map of tracked facilities in Wisconsin"
+  >
+  </div>
+  <div class="legend">
+    <span class="legend-title">Water confidence</span>
+    {
+      CONFIDENCE_LEVELS.map((level) => (
+        <span class="legend-item">
+          <span class="dot" style={`background:${CONFIDENCE_COLORS[level]}`} aria-hidden="true" />
+          {level}
+        </span>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  import maplibregl from 'maplibre-gl';
+  import 'maplibre-gl/dist/maplibre-gl.css';
+
+  interface Pin {
+    id: string;
+    name: string;
+    developer: string;
+    status: string;
+    lat: number;
+    lng: number;
+    confidence: string;
+    href: string;
+  }
+
+  // Wisconsin bounding box, west-south to east-north.
+  const WISCONSIN: [[number, number], [number, number]] = [
+    [-92.9, 42.49],
+    [-86.8, 47.1],
+  ];
+
+  function popupContent(pin: Pin): HTMLElement {
+    const el = document.createElement('div');
+    el.className = 'pin-popup';
+    const name = document.createElement('strong');
+    name.textContent = pin.name;
+    const developer = document.createElement('div');
+    developer.textContent = `Developer: ${pin.developer}`;
+    const status = document.createElement('div');
+    status.textContent = `Status: ${pin.status}`;
+    const link = document.createElement('a');
+    link.href = pin.href;
+    link.textContent = 'View facility';
+    el.append(name, developer, status, link);
+    return el;
+  }
+
+  for (const container of document.querySelectorAll<HTMLElement>('.map')) {
+    const pins: Pin[] = JSON.parse(container.dataset.pins ?? '[]');
+    const colors: Record<string, string> = JSON.parse(container.dataset.colors ?? '{}');
+
+    const map = new maplibregl.Map({
+      container,
+      bounds: WISCONSIN,
+      fitBoundsOptions: { padding: 20 },
+      cooperativeGestures: true,
+      style: {
+        version: 8,
+        sources: {
+          osm: {
+            type: 'raster',
+            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tileSize: 256,
+            maxzoom: 19,
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          },
+        },
+        layers: [{ id: 'osm', type: 'raster', source: 'osm' }],
+      },
+    });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }));
+
+    for (const pin of pins) {
+      const marker = new maplibregl.Marker({ color: colors[pin.confidence] })
+        .setLngLat([pin.lng, pin.lat])
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setDOMContent(popupContent(pin)))
+        .addTo(map);
+      const el = marker.getElement();
+      el.setAttribute('aria-label', `${pin.name}, water confidence ${pin.confidence}`);
+      el.setAttribute('title', pin.name);
+    }
+  }
+</script>
+
+<style>
+  .map {
+    height: 32rem;
+    max-height: 70vh;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .legend-title {
+    font-weight: 600;
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+  }
+  .dot {
+    width: 0.75em;
+    height: 0.75em;
+    border-radius: 50%;
+  }
+  :global(.pin-popup) {
+    display: grid;
+    gap: 0.15rem;
+    font-size: 0.9rem;
+  }
+</style>

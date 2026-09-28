@@ -1,12 +1,153 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import Map, { type MapPin } from '../components/Map.astro';
+import ConfidenceBadge from '../components/ConfidenceBadge.astro';
+import { loadData, STATUS_LABELS, STATUS_ORDER } from '../lib/loadData';
+import { facilityWaterConfidence } from '../lib/confidence';
+import { facilityUrl } from '../lib/paths';
+
+const { facilities, claims } = loadData();
+
+const rows = facilities.map((f) => ({
+  facility: f,
+  confidence: facilityWaterConfidence(claims.get(f.id) ?? []),
+  statusLabel: STATUS_LABELS[f.status],
+  statusRank: STATUS_ORDER.indexOf(f.status),
+  href: facilityUrl(f.id),
+}));
+
+const pins: MapPin[] = rows
+  .filter((r) => r.facility.location.lat != null && r.facility.location.lng != null)
+  .map((r) => ({
+    id: r.facility.id,
+    name: r.facility.name,
+    developer: r.facility.developer,
+    status: r.statusLabel,
+    lat: r.facility.location.lat as number,
+    lng: r.facility.location.lng as number,
+    confidence: r.confidence,
+    href: r.href,
+  }));
+
+const unmapped = rows.length - pins.length;
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Wisconsin AI Infrastructure &amp; Water Tracker</title>
-  </head>
-  <body>
-    <h1>Wisconsin AI Infrastructure &amp; Water Tracker</h1>
-  </body>
-</html>
+
+<Layout title="Wisconsin AI Infrastructure & Water Tracker">
+  <h1>Data centers in Wisconsin</h1>
+  <p class="intro">
+    This map shows proposed and operating data centers in Wisconsin. Pin color shows water confidence. That is
+    how solid the public information about a facility's water use is, based on where it came from and how old it
+    is. Gray means no water figure has been made public.
+  </p>
+
+  <Map pins={pins} />
+  {
+    unmapped > 0 && (
+      <p class="muted">
+        {unmapped} {unmapped === 1 ? 'facility has' : 'facilities have'} no known location and{' '}
+        {unmapped === 1 ? 'is' : 'are'} not on the map. {unmapped === 1 ? 'It is' : 'They are'} in the table below.
+      </p>
+    )
+  }
+
+  <h2>All facilities</h2>
+  <div class="table-wrap">
+    <table class="facility-table">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Developer</th>
+          <th scope="col" aria-sort="none">
+            <button type="button" data-sort="status">Status <span aria-hidden="true">↕</span></button>
+          </th>
+          <th scope="col" aria-sort="none">
+            <button type="button" data-sort="county">County <span aria-hidden="true">↕</span></button>
+          </th>
+          <th scope="col">Water confidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((r) => (
+            <tr data-status={r.statusRank} data-county={r.facility.location.county} data-name={r.facility.name}>
+              <td>
+                <a href={r.href}>{r.facility.name}</a>
+              </td>
+              <td>{r.facility.developer}</td>
+              <td>{r.statusLabel}</td>
+              <td>{r.facility.location.county}</td>
+              <td>
+                <ConfidenceBadge level={r.confidence} />
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</Layout>
+
+<script>
+  for (const table of document.querySelectorAll<HTMLTableElement>('.facility-table')) {
+    const tbody = table.tBodies[0];
+    const buttons = table.querySelectorAll<HTMLButtonElement>('button[data-sort]');
+
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        const key = button.dataset.sort as 'status' | 'county';
+        const th = button.closest('th')!;
+        const ascending = th.getAttribute('aria-sort') !== 'ascending';
+
+        for (const other of buttons) other.closest('th')!.setAttribute('aria-sort', 'none');
+        th.setAttribute('aria-sort', ascending ? 'ascending' : 'descending');
+
+        const rows = [...tbody.rows];
+        rows.sort((a, b) => {
+          const primary =
+            key === 'status'
+              ? Number(a.dataset.status) - Number(b.dataset.status)
+              : a.dataset.county!.localeCompare(b.dataset.county!);
+          // Ties keep a stable order by name.
+          return (ascending ? primary : -primary) || a.dataset.name!.localeCompare(b.dataset.name!);
+        });
+        tbody.append(...rows);
+      });
+    }
+  }
+</script>
+
+<style>
+  .intro {
+    max-width: 42rem;
+  }
+  .table-wrap {
+    overflow-x: auto;
+  }
+  .facility-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .facility-table th,
+  .facility-table td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .facility-table th {
+    background: var(--bg-soft);
+    font-weight: 600;
+  }
+  .facility-table th button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .facility-table th button:hover {
+    text-decoration: underline;
+  }
+</style>

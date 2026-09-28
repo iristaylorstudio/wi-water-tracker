@@ -19,6 +19,16 @@ const RANK: Record<Confidence, number> = { None: 0, Low: 1, Medium: 2, High: 3 }
 
 const FRESH_MONTHS = 18;
 
+/** Display colors, shared by map pins and badges. None is gray: nothing to grade. */
+export const CONFIDENCE_COLORS: Record<Confidence, string> = {
+  High: '#1b6b47',
+  Medium: '#5e9e6e',
+  Low: '#d49a1f',
+  None: '#8a8f94',
+};
+
+export const CONFIDENCE_LEVELS: Confidence[] = ['High', 'Medium', 'Low', 'None'];
+
 /** Claim types that count toward a facility's water confidence. */
 export const WATER_CLAIM_TYPES: ClaimType[] = [
   'water_withdrawal_gpd',
