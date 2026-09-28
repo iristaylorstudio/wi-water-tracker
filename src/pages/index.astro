@@ -2,7 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import Map, { type MapPin } from '../components/Map.astro';
 import ConfidenceBadge from '../components/ConfidenceBadge.astro';
-import { loadData, STATUS_LABELS, STATUS_ORDER } from '../lib/loadData';
+import { loadData } from '../lib/loadData';
+import { STATUS_LABELS, STATUS_ORDER } from '../lib/labels';
 import { facilityWaterConfidence } from '../lib/confidence';
 import { facilityUrl } from '../lib/paths';
 

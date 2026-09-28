@@ -19,29 +19,6 @@ export type FacilityStatus =
   | 'canceled'
   | 'denied';
 
-/** Lifecycle order, used for sorting. */
-export const STATUS_ORDER: FacilityStatus[] = [
-  'proposal_pending',
-  'proposed',
-  'announced',
-  'under_construction',
-  'operational',
-  'on_hold',
-  'canceled',
-  'denied',
-];
-
-export const STATUS_LABELS: Record<FacilityStatus, string> = {
-  proposal_pending: 'Proposal pending',
-  proposed: 'Proposed',
-  announced: 'Announced',
-  under_construction: 'Under construction',
-  operational: 'Operational',
-  on_hold: 'On hold',
-  canceled: 'Canceled',
-  denied: 'Denied',
-};
-
 export type EvidenceType =
   | 'filing'
   | 'government_record'

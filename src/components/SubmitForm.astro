@@ -1,0 +1,14 @@
+---
+// Placeholder. Step 7 of KICKOFF_PROMPT.md replaces this with the Tally embed.
+
+interface Props {
+  /** Facility id to prefill, or omit for the general form. */
+  facilityId?: string;
+}
+
+const { facilityId } = Astro.props;
+---
+
+<div class="submit-form" data-facility={facilityId}>
+  <p class="muted">The submission form is not configured yet.</p>
+</div>

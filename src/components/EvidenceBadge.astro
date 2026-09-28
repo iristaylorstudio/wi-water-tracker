@@ -1,0 +1,28 @@
+---
+import type { EvidenceType } from '../lib/loadData';
+import { EVIDENCE_LABELS } from '../lib/labels';
+
+interface Props {
+  type: EvidenceType;
+}
+
+const { type } = Astro.props;
+---
+
+<span class:list={['evidence-badge', `evidence-${type}`]}>{EVIDENCE_LABELS[type]}</span>
+
+<style>
+  .evidence-badge {
+    display: inline-block;
+    padding: 0.05rem 0.5rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    background: var(--bg-soft);
+  }
+  .evidence-unknown {
+    border-style: dashed;
+    background: transparent;
+  }
+</style>

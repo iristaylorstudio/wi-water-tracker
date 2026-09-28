@@ -1,0 +1,151 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ClaimTable from '../../components/ClaimTable.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import EventTimeline from '../../components/EventTimeline.astro';
+import SubmitForm from '../../components/SubmitForm.astro';
+import { loadData, type Facility, type Source } from '../../lib/loadData';
+import { facilityWaterConfidence, undisclosedWaterTypes, WATER_CLAIM_TYPES } from '../../lib/confidence';
+import { CLAIM_TYPE_HELP, CLAIM_TYPE_LABELS, STATUS_LABELS } from '../../lib/labels';
+import { formatDate } from '../../lib/format';
+import { url } from '../../lib/paths';
+
+export function getStaticPaths() {
+  return loadData().facilities.map((facility) => ({ params: { id: facility.id }, props: { facility } }));
+}
+
+interface Props {
+  facility: Facility;
+}
+
+const { facility } = Astro.props;
+const data = loadData();
+const claims = data.claims.get(facility.id) ?? [];
+const events = data.events.get(facility.id) ?? [];
+
+const confidence = facilityWaterConfidence(claims);
+const undisclosed = undisclosedWaterTypes(claims);
+
+// Every source a claim or event on this page cites, newest first.
+const sourceIds = new Set([...claims.map((c) => c.source), ...events.map((e) => e.source)]);
+const pageSources = [...sourceIds]
+  .map((id) => data.sources.get(id))
+  .filter((s): s is Source => s != null)
+  .sort((a, b) => (b.published ?? '').localeCompare(a.published ?? ''));
+---
+
+<Layout title={facility.name} description={`${facility.name}: what is publicly known about this data center's water use.`}>
+  <p class="back"><a href={url('/')}>← All facilities</a></p>
+
+  <header class="facility-header">
+    <h1>{facility.name}</h1>
+    <dl class="facts">
+      <div><dt>Developer</dt><dd>{facility.developer}</dd></div>
+      <div><dt>Status</dt><dd>{STATUS_LABELS[facility.status]}</dd></div>
+      <div><dt>County</dt><dd>{facility.location.county}</dd></div>
+      <div>
+        <dt>Water: how well documented</dt>
+        <dd><ConfidenceBadge level={confidence} /></dd>
+      </div>
+    </dl>
+    <p class="muted reviewed">Last reviewed {formatDate(facility.last_reviewed)}.</p>
+  </header>
+
+  <h2>What public records say</h2>
+  <p class="muted section-note">
+    Each figure shows its evidence type, meaning what kind of record it came from, and the date it was stated.
+  </p>
+  {claims.length > 0 ? <ClaimTable claims={claims} sources={data.sources} /> : <p class="muted">No claims recorded yet.</p>}
+
+  <h2>What is not disclosed</h2>
+  {
+    undisclosed.length === 0 ? (
+      <p>Every water fact tracked here has a public figure.</p>
+    ) : (
+      <>
+        <p>
+          <strong>
+            {undisclosed.length} of {WATER_CLAIM_TYPES.length} water facts not disclosed.
+          </strong>{' '}
+          No public record we have found gives a figure for these.
+        </p>
+        <ul class="undisclosed">
+          {undisclosed.map((type) => (
+            <li>
+              {CLAIM_TYPE_LABELS[type]}
+              {CLAIM_TYPE_HELP[type] && <span class="muted">: {CLAIM_TYPE_HELP[type]}</span>}
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  <h2>Timeline</h2>
+  <EventTimeline events={events} sources={data.sources} />
+
+  <h2>Sources</h2>
+  {
+    pageSources.length === 0 ? (
+      <p class="muted">No sources yet.</p>
+    ) : (
+      <ul class="sources">
+        {pageSources.map((s) => (
+          <li>
+            <a href={s.url}>{s.title}</a>
+            <span class="muted">
+              . {s.publisher}, {formatDate(s.published)}
+            </span>
+            {s.archived_url && (
+              <>
+                {' '}
+                (<a href={s.archived_url}>archived copy</a>)
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <h2>Know something we don't?</h2>
+  <p>Send a document, meeting notice, news article or correction about this facility.</p>
+  <SubmitForm facilityId={facility.id} />
+</Layout>
+
+<style>
+  .back {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    margin: 0.75rem 0 0.25rem;
+  }
+  .facts dt {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .facts dd {
+    margin: 0;
+    font-weight: 600;
+  }
+  .reviewed {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  .section-note {
+    margin-top: -0.25rem;
+    font-size: 0.9rem;
+  }
+  .undisclosed,
+  .sources {
+    padding-left: 1.25rem;
+  }
+  .undisclosed li,
+  .sources li {
+    margin-bottom: 0.35rem;
+  }
+</style>

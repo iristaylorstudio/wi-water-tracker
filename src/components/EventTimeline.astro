@@ -1,0 +1,92 @@
+---
+import EvidenceBadge from './EvidenceBadge.astro';
+import type { FacilityEvent, Source } from '../lib/loadData';
+import { EVENT_TYPE_LABELS } from '../lib/labels';
+import { formatDate } from '../lib/format';
+
+interface Props {
+  /** Oldest first, as loadData returns them. */
+  events: FacilityEvent[];
+  sources: Map<string, Source>;
+}
+
+const { events, sources } = Astro.props;
+---
+
+{
+  events.length === 0 ? (
+    <p class="muted">No events recorded yet.</p>
+  ) : (
+    <ol class="timeline">
+      {events.map((e) => {
+        const source = sources.get(e.source);
+        return (
+          <li>
+            <div class="when">
+              <time datetime={e.date}>{formatDate(e.date)}</time>
+              <span class="type">{EVENT_TYPE_LABELS[e.type] ?? e.type}</span>
+            </div>
+            <div class="what">
+              <strong>{e.title}</strong>
+              <p>{e.body}</p>
+              {e.outcome && <p>Outcome: {e.outcome}</p>}
+              <p class="meta">
+                <EvidenceBadge type={e.evidence_type} />
+                {source ? <a href={source.url}>{source.title}</a> : e.source}
+              </p>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  )
+}
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 2px solid var(--line);
+  }
+  .timeline li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0.25rem 1rem;
+    padding: 0 0 1.25rem 1rem;
+  }
+  .timeline li::before {
+    content: '';
+    position: absolute;
+    left: -0.4rem;
+    top: 0.35rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--muted);
+  }
+  .when {
+    display: grid;
+    font-size: 0.9rem;
+  }
+  .type {
+    color: var(--muted);
+  }
+  .what p {
+    margin: 0.2rem 0 0;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+  @media (max-width: 40rem) {
+    .timeline li {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

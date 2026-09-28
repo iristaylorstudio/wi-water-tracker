@@ -1,0 +1,240 @@
+---
+// Claims grouped by claim type. Claims with an open conflict render side by side
+// under a "Sources disagree" label. Neither is picked as the right one.
+
+import EvidenceBadge from './EvidenceBadge.astro';
+import type { Claim, ClaimType, Source } from '../lib/loadData';
+import { isSuperseded } from '../lib/confidence';
+import { CLAIM_TYPE_HELP, CLAIM_TYPE_LABELS, CLAIM_TYPE_ORDER } from '../lib/labels';
+import { formatDate, formatUnit, formatValue, litersTooltip } from '../lib/format';
+
+interface Props {
+  claims: Claim[];
+  sources: Map<string, Source>;
+}
+
+const { claims, sources } = Astro.props;
+
+const types = [
+  ...CLAIM_TYPE_ORDER.filter((t) => claims.some((c) => c.claim_type === t)),
+  ...new Set(claims.map((c) => c.claim_type).filter((t) => !CLAIM_TYPE_ORDER.includes(t))),
+] as ClaimType[];
+
+/** Splits a group into standalone claims and clusters of claims that disagree. */
+function splitConflicts(group: Claim[]): { single: Claim[]; clusters: Claim[][] } {
+  const current = group.filter((c) => !isSuperseded(c));
+  const ids = new Set(current.map((c) => c.id));
+  const links = new Map<string, Set<string>>(current.map((c) => [c.id, new Set<string>()]));
+  for (const c of current) {
+    for (const other of c.conflicts_with ?? []) {
+      if (!ids.has(other)) continue;
+      links.get(c.id)!.add(other);
+      links.get(other)!.add(c.id);
+    }
+  }
+
+  const seen = new Set<string>();
+  const clusters: Claim[][] = [];
+  for (const c of current) {
+    if (seen.has(c.id) || links.get(c.id)!.size === 0) continue;
+    const cluster: Claim[] = [];
+    const stack = [c.id];
+    while (stack.length) {
+      const id = stack.pop()!;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      cluster.push(current.find((x) => x.id === id)!);
+      stack.push(...links.get(id)!);
+    }
+    clusters.push(cluster.sort((a, b) => (a.as_of ?? '').localeCompare(b.as_of ?? '')));
+  }
+
+  return { single: group.filter((c) => !seen.has(c.id)), clusters };
+}
+
+const groups = types.map((type) => ({
+  type,
+  ...splitConflicts(claims.filter((c) => c.claim_type === type)),
+}));
+---
+
+{
+  groups.map(({ type, single, clusters }) => (
+    <section class="claim-group">
+      <h3>{CLAIM_TYPE_LABELS[type] ?? type}</h3>
+      {CLAIM_TYPE_HELP[type] && <p class="help muted">{CLAIM_TYPE_HELP[type]}</p>}
+
+      {single.length > 0 && (
+        <div class="table-wrap">
+          <table class="claim-table">
+            <thead>
+              <tr>
+                <th scope="col">Value</th>
+                <th scope="col">Unit</th>
+                <th scope="col">Qualifier</th>
+                <th scope="col">Evidence</th>
+                <th scope="col">As of</th>
+                <th scope="col">Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {single.map((c) => {
+                const source = sources.get(c.source);
+                const liters = litersTooltip(c);
+                return (
+                  <tr class:list={{ superseded: isSuperseded(c) }}>
+                    <td class="value">
+                      {liters ? (
+                        <span class="has-tooltip" title={liters} tabindex="0">
+                          {formatValue(c)}
+                        </span>
+                      ) : (
+                        formatValue(c)
+                      )}
+                      {c.method && <div class="method muted">Method: {c.method}</div>}
+                      {isSuperseded(c) && <div class="muted">Replaced by a newer claim</div>}
+                    </td>
+                    <td>{formatUnit(c.unit)}</td>
+                    <td>{c.qualifier}</td>
+                    <td>
+                      <EvidenceBadge type={c.evidence_type} />
+                    </td>
+                    <td>{formatDate(c.as_of)}</td>
+                    <td>{source ? <a href={source.url}>{source.title}</a> : c.source}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {clusters.map((cluster) => (
+        <div class="disagree">
+          <p class="disagree-label">
+            <strong>Sources disagree.</strong> These {cluster.length} sources give different figures. We show
+            them all and do not pick one.
+          </p>
+          <div class="disagree-grid">
+            {cluster.map((c) => {
+              const source = sources.get(c.source);
+              const liters = litersTooltip(c);
+              return (
+                <dl class="disagree-card">
+                  <dt>Value</dt>
+                  <dd class="value">
+                    {liters ? (
+                      <span class="has-tooltip" title={liters} tabindex="0">
+                        {formatValue(c)}
+                      </span>
+                    ) : (
+                      formatValue(c)
+                    )}{' '}
+                    {formatUnit(c.unit)}
+                    {c.method && <div class="method muted">Method: {c.method}</div>}
+                  </dd>
+                  {c.qualifier && (
+                    <>
+                      <dt>Qualifier</dt>
+                      <dd>{c.qualifier}</dd>
+                    </>
+                  )}
+                  <dt>Evidence</dt>
+                  <dd>
+                    <EvidenceBadge type={c.evidence_type} />
+                  </dd>
+                  <dt>As of</dt>
+                  <dd>{formatDate(c.as_of)}</dd>
+                  <dt>Source</dt>
+                  <dd>{source ? <a href={source.url}>{source.title}</a> : c.source}</dd>
+                </dl>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </section>
+  ))
+}
+
+<style>
+  .claim-group {
+    margin-bottom: 1.75rem;
+  }
+  .claim-group h3 {
+    font-size: 1.05rem;
+    margin: 0 0 0.25rem;
+  }
+  .help {
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+  }
+  .table-wrap {
+    overflow-x: auto;
+  }
+  .claim-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .claim-table th,
+  .claim-table td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.45rem 0.75rem 0.45rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .claim-table th {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .value {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .method {
+    font-weight: 400;
+    white-space: normal;
+    font-size: 0.85rem;
+  }
+  .superseded {
+    color: var(--muted);
+  }
+  .has-tooltip {
+    text-decoration: underline dotted;
+    cursor: help;
+  }
+  .disagree {
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--muted);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-top: 0.75rem;
+  }
+  .disagree-label {
+    margin: 0 0 0.75rem;
+  }
+  .disagree-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.75rem;
+  }
+  .disagree-card {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 0.75rem;
+    margin: 0;
+    padding: 0.75rem;
+    background: var(--bg-soft);
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+  .disagree-card dt {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .disagree-card dd {
+    margin: 0;
+  }
+</style>

@@ -42,7 +42,7 @@ export const WATER_CLAIM_TYPES: ClaimType[] = [
 ];
 
 /** A claim no longer current because a newer claim replaced it. */
-const isSuperseded = (c: Claim) => c.superseded_by != null && c.superseded_by !== '';
+export const isSuperseded = (c: Claim) => c.superseded_by != null && c.superseded_by !== '';
 
 /**
  * A conflict is open when this claim and the other claim are both current
@@ -105,17 +105,18 @@ export function facilityWaterConfidence(claims: Claim[], now: Date = new Date())
   return weakest(known);
 }
 
-const isUnknown = (c: Claim) => c.evidence_type === 'unknown' || c.value === 'unknown';
+export const isUnknownClaim = (c: Claim) => c.evidence_type === 'unknown' || c.value === 'unknown';
 
 /**
- * For "3 of 5 water facts not disclosed." Counts by claim type: a type is disclosed
- * when at least one current claim of that type has a value. A type with no claim at
- * all counts as not disclosed. Total is always the number of water claim types.
+ * Water claim types with no current claim that has a value. A type with no claim
+ * at all counts as not disclosed. Two conflicting claims of one type are one fact.
  */
-export function waterDisclosure(claims: Claim[]): { unknown: number; total: number } {
+export function undisclosedWaterTypes(claims: Claim[]): ClaimType[] {
   const water = currentWaterClaims(claims);
-  const unknown = WATER_CLAIM_TYPES.filter(
-    (type) => !water.some((c) => c.claim_type === type && !isUnknown(c)),
-  ).length;
-  return { unknown, total: WATER_CLAIM_TYPES.length };
+  return WATER_CLAIM_TYPES.filter((type) => !water.some((c) => c.claim_type === type && !isUnknownClaim(c)));
+}
+
+/** For "3 of 5 water facts not disclosed." */
+export function waterDisclosure(claims: Claim[]): { unknown: number; total: number } {
+  return { unknown: undisclosedWaterTypes(claims).length, total: WATER_CLAIM_TYPES.length };
 }
