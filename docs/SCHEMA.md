@@ -167,6 +167,7 @@ No identifiers. Aggregate before publishing.
 `scripts/validate.js` should fail the build if:
 
 - any claim's `source` does not match a source id
+- any event's `source` does not match a source id
 - any claim with `evidence_type: modeled` lacks `method`
 - any `conflicts_with` points to a missing claim
 - any facility has no `last_reviewed` date

@@ -41,6 +41,7 @@ const isEmpty = (v) =>
 const facilities = loadDir('facilities');
 const sources = loadDir('sources');
 const claimFiles = loadDir('claims');
+const eventFiles = loadDir('events');
 
 const sourceIds = new Set(sources.map((s) => s.doc.id).filter(Boolean));
 
@@ -96,6 +97,15 @@ for (const { file, claim } of claims) {
 
   // Rule: any value field is empty rather than unknown.
   if (isEmpty(claim.value)) fail(file, `claim "${id}" value is empty; use "unknown"`);
+}
+
+for (const { file, doc } of eventFiles) {
+  for (const event of doc.events ?? []) {
+    // Rule: any event's source does not match a source id.
+    if (!sourceIds.has(event.source)) {
+      fail(file, `event "${event.id ?? '(no id)'}" source "${event.source}" does not match any id in data/sources/`);
+    }
+  }
 }
 
 if (errors.length) {
