@@ -52,7 +52,7 @@ Water claims are `water_withdrawal_gpd`, `water_consumption_gpd`, `water_source`
 
 A facility's water confidence is the weakest confidence among its water claims that have a value. `unknown` claims are left out of this. It is None only when every water claim is `unknown` or there are none. Show it on the map pin. The pin answers "how solid is what we know," not "is anything missing."
 
-Missing water facts are counted separately and shown on the facility page, for example "3 of 5 water facts not disclosed."
+Missing water facts are counted separately and shown on the facility page, for example "3 of 5 water facts not disclosed." The count is by claim type. A type is disclosed when at least one current claim of that type has a value. Two conflicting claims of the same type are one fact. A type with no claim at all counts as not disclosed.
 
 ## facility.yaml
 

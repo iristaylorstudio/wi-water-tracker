@@ -92,9 +92,17 @@ export function facilityWaterConfidence(claims: Claim[], now: Date = new Date())
   return weakest(known);
 }
 
-/** For "3 of 5 water facts not disclosed." */
+const isUnknown = (c: Claim) => c.evidence_type === 'unknown' || c.value === 'unknown';
+
+/**
+ * For "3 of 5 water facts not disclosed." Counts by claim type: a type is disclosed
+ * when at least one current claim of that type has a value. A type with no claim at
+ * all counts as not disclosed. Total is always the number of water claim types.
+ */
 export function waterDisclosure(claims: Claim[]): { unknown: number; total: number } {
   const water = currentWaterClaims(claims);
-  const unknown = water.filter((c) => c.evidence_type === 'unknown' || c.value === 'unknown').length;
-  return { unknown, total: water.length };
+  const unknown = WATER_CLAIM_TYPES.filter(
+    (type) => !water.some((c) => c.claim_type === type && !isUnknown(c)),
+  ).length;
+  return { unknown, total: WATER_CLAIM_TYPES.length };
 }
