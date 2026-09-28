@@ -72,6 +72,6 @@ src/
 - Site commits: `site: add confidence badge to claim table`
 - Never commit `.env`.
 
-## Two-machine workflow
+## Repo habits
 
-The maintainer works from two computers. Always `git pull` before editing. Never leave uncommitted data changes at the end of a session.
+The maintainer works from one computer. Push to GitHub through GitHub Desktop at the end of every session. Never leave uncommitted data changes at the end of a session.
