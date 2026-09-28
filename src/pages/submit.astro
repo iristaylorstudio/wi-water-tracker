@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SubmitForm from '../components/SubmitForm.astro';
+import { url } from '../lib/paths';
+---
+
+<Layout title="Send a tip" description="Send a document, meeting notice, news article, correction or tip about a Wisconsin data center.">
+  <div class="prose">
+    <h1>Send a tip</h1>
+    <p>
+      You can send a document, a meeting notice, a news article, a correction or a tip about any data center in
+      Wisconsin. It can be about a facility already on this site or a new one.
+    </p>
+    <p>
+      Nothing goes on the site until we review it. If we use what you send, we cite the document or article, not
+      you.
+    </p>
+    <p>
+      Your email is optional and never published. See the <a href={url('privacy/')}>privacy page</a> for exactly
+      what the form collects.
+    </p>
+  </div>
+
+  <SubmitForm />
+</Layout>

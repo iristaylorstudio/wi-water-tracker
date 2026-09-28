@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { url } from '../lib/paths';
+---
+
+<Layout title="Privacy" description="What the submission form collects and how it is handled. Emails are never published.">
+  <div class="prose">
+    <h1>Privacy</h1>
+
+    <h2>What the submission form collects</h2>
+    <p>The <a href={url('submit/')}>submission form</a> asks for these things and nothing else:</p>
+    <ul>
+      <li>Which facility it is about, or "new facility"</li>
+      <li>The type of submission: document, meeting notice, news article, correction or tip</li>
+      <li>A link or an uploaded file</li>
+      <li>The date of the thing you are sending</li>
+      <li>Short notes</li>
+      <li>Your email address, only if you choose to give it</li>
+      <li>A checkbox for whether we may contact you about this submission</li>
+    </ul>
+    <p>
+      If you open the form from a facility page, the facility is filled in for you. The form service also records the
+      date and time you sent it.
+    </p>
+
+    <h2>Emails are never published</h2>
+    <p>
+      Your email address is never published on this site or anywhere else. We use it only to contact you about your
+      submission, and only if you checked the box.
+    </p>
+    <p>
+      Nothing you send goes on the site until we review it. If we use it, we cite the document or article itself. We
+      do not name you.
+    </p>
+
+    <h2>Where submissions are stored</h2>
+    <p>
+      Submissions are stored in Tally, the form service this site uses. Only the maintainer of this site reviews them.
+      <a href="https://tally.so/help/privacy-policy">Tally's privacy policy</a> covers how Tally stores data.
+    </p>
+
+    <h2>Deleting a submission</h2>
+    <p>
+      To have a submission deleted, send a new submission with the type "correction." Put "delete my submission" in
+      the notes and give the email address you used before, if you gave one. We will delete it from Tally.
+    </p>
+
+    <h2>The rest of the site</h2>
+    <p>
+      This site has no accounts. It sets no cookies of its own and uses no analytics. The map images are loaded from
+      OpenStreetMap's servers and the form is loaded from Tally. Like any website, those services can see your IP
+      address when your browser loads them.
+    </p>
+  </div>
+</Layout>

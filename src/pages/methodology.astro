@@ -1,0 +1,197 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ConfidenceBadge from '../components/ConfidenceBadge.astro';
+import { url } from '../lib/paths';
+---
+
+<Layout title="Methodology" description="How this tracker grades evidence and computes confidence.">
+  <div class="prose">
+    <h1>How this tracker works</h1>
+
+    <h2>Claims</h2>
+    <p>
+      Every figure on this site is a claim. A claim is one statement from one source. For example: "The developer
+      says the campus will withdraw 250,000 gallons of water a day."
+    </p>
+    <p>Each claim shows three things: where it came from, what kind of record that is and the date it was made.</p>
+    <p>
+      If no public record gives a figure, we show it as unknown. Unknown is a finding. We do not hide it and we do not
+      guess.
+    </p>
+    <p>
+      When two sources give different figures, we show both side by side and mark them "sources disagree." We do not
+      pick one.
+    </p>
+
+    <h2>Water terms</h2>
+    <dl class="terms">
+      <dt>Withdrawal</dt>
+      <dd>Water taken from a well, lake or utility. Some of it may be returned, for example to a sewer.</dd>
+      <dt>Consumption</dt>
+      <dd>Water used up and not returned. Most of it evaporates.</dd>
+    </dl>
+    <p>These are different numbers. We never add them together or treat one as the other.</p>
+    <p>
+      Water is shown in gallons per day because that is how Wisconsin filings report it. Hover over or tap a figure to
+      see liters per day. Power is shown in megawatts (MW).
+    </p>
+
+    <h2>Evidence types</h2>
+    <p>
+      Every claim has an evidence type. It says what kind of record the claim came from. They are listed from
+      strongest to weakest.
+    </p>
+  </div>
+
+  <div class="table-wrap">
+    <table class="evidence-table">
+      <thead>
+        <tr>
+          <th scope="col">Evidence type</th>
+          <th scope="col">What it means</th>
+          <th scope="col">Examples</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Filing</td>
+          <td>A sworn or regulatory record.</td>
+          <td>
+            A filing with the Public Service Commission of Wisconsin (PSC). A permit application to the Department of
+            Natural Resources (DNR). An environmental impact statement. Testimony in a utility rate case.
+          </td>
+        </tr>
+        <tr>
+          <td>Government record</td>
+          <td>Official but not sworn.</td>
+          <td>
+            A council agenda, meeting minutes or a staff report. A TIF agreement, which is a deal where future property
+            taxes pay for project costs.
+          </td>
+        </tr>
+        <tr>
+          <td>Company statement</td>
+          <td>The developer or operator said it.</td>
+          <td>A press release, the company's website or a quote in an interview.</td>
+        </tr>
+        <tr>
+          <td>News report</td>
+          <td>A news outlet reported it, citing its own sources.</td>
+          <td>An article that cites "documents reviewed" by the reporter.</td>
+        </tr>
+        <tr>
+          <td>Researcher estimate</td>
+          <td>An academic or think tank estimated it.</td>
+          <td>A Wisconsin Policy Forum report or a university study.</td>
+        </tr>
+        <tr>
+          <td>Modeled</td>
+          <td>We calculated it.</td>
+          <td>Only shown with the formula and inputs we used, written next to the figure.</td>
+        </tr>
+        <tr>
+          <td>Unknown</td>
+          <td>Nobody has said.</td>
+          <td>This is where every fact starts until a source says otherwise.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <h2>How confidence is computed</h2>
+    <p>
+      Each claim gets a confidence level. It is set by the site's code from the rules below every time the site is
+      rebuilt. Nobody types it in by hand.
+    </p>
+    <dl class="levels">
+      <dt><ConfidenceBadge level="High" /></dt>
+      <dd>A filing or government record from the last 18 months, and no other source disagrees.</dd>
+      <dt><ConfidenceBadge level="Medium" /></dt>
+      <dd>
+        A company statement or news report. Or a filing or government record that is more than 18 months old or has
+        no date. In both cases no other source disagrees.
+      </dd>
+      <dt><ConfidenceBadge level="Low" /></dt>
+      <dd>A researcher estimate or a figure we modeled. Or any claim where another source disagrees.</dd>
+      <dt><ConfidenceBadge level="None" /></dt>
+      <dd>Unknown. No public figure.</dd>
+    </dl>
+    <p>
+      Age is counted from the day the site was last rebuilt. A claim can move from High to Medium as it gets older,
+      even if nothing else changes.
+    </p>
+    <p>
+      A disagreement stops counting once one of the two claims is replaced by a newer claim. The old claim stays on the
+      page, marked as replaced.
+    </p>
+
+    <h3>Map pins</h3>
+    <p>
+      The map shows one pin per facility. Its color shows how well documented the facility's water use is. We call
+      this water confidence.
+    </p>
+    <p>
+      Five facts count as water facts: withdrawal, consumption, water source, cooling type and cooling water reuse.
+      Cooling type is included because it is the main thing that decides how much water a facility uses.
+    </p>
+    <p>
+      The pin shows the lowest confidence among the water facts that have a figure. Facts that are unknown are left
+      out. So the pin answers "how solid is what we know," not "is anything missing." A pin is gray only when every
+      water fact is unknown.
+    </p>
+    <p>
+      Missing facts get their own section on each facility page, called "What is not disclosed." It gives a count,
+      such as "3 of 5 water facts not disclosed." If two sources disagree about one fact, that still counts as one
+      fact.
+    </p>
+
+    <h2>Corrections</h2>
+    <p>
+      If you think something here is wrong or out of date, <a href={url('submit/')}>send a correction</a>. Include a
+      link to the record if you can.
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .table-wrap {
+    overflow-x: auto;
+    max-width: 56rem;
+  }
+  .evidence-table {
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .evidence-table th,
+  .evidence-table td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .evidence-table td:first-child {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .evidence-table th {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .terms,
+  .levels {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1rem;
+  }
+  .terms dt {
+    font-weight: 600;
+  }
+  .terms dd,
+  .levels dd {
+    margin: 0;
+  }
+  .levels dt {
+    font-weight: 600;
+  }
+</style>

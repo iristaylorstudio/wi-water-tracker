@@ -1,6 +1,6 @@
 // Plain-language labels for schema enums. Keys match docs/SCHEMA.md.
 
-import type { ClaimType, EventType, EvidenceType, FacilityStatus } from './loadData';
+import type { ClaimType, EventType, EvidenceType, FacilityStatus, SourceType } from './loadData';
 
 /** Lifecycle order, used for sorting. */
 export const STATUS_ORDER: FacilityStatus[] = [
@@ -73,7 +73,7 @@ export const CLAIM_TYPE_LABELS: Record<ClaimType, string> = {
 /** One-line explanation shown the first time a term appears on a page. */
 export const CLAIM_TYPE_HELP: Partial<Record<ClaimType, string>> = {
   water_withdrawal_gpd: 'Water taken from a well, lake or utility.',
-  water_consumption_gpd: 'Water used up, mostly lost to evaporation, and not returned.',
+  water_consumption_gpd: 'Water used up and not returned. Most of it evaporates.',
 };
 
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
@@ -87,4 +87,14 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   lawsuit: 'Lawsuit',
   construction_milestone: 'Construction milestone',
   news: 'News',
+};
+
+export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
+  filing: 'Filing',
+  government_record: 'Government record',
+  press_release: 'Press release',
+  news: 'News',
+  research: 'Research',
+  database: 'Database',
+  submission: 'Submission',
 };
