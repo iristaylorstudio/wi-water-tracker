@@ -1,0 +1,62 @@
+facility: example-city-c
+claims:
+  - id: example-city-c-water_withdrawal_gpd-1
+    claim_type: water_withdrawal_gpd
+    value: unknown
+    unit: gpd
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-c-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-c-water_consumption_gpd-1
+    claim_type: water_consumption_gpd
+    value: unknown
+    unit: gpd
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-c-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-c-water_source-1
+    claim_type: water_source
+    value: unknown
+    unit: null
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-c-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-c-cooling_type-1
+    claim_type: cooling_type
+    value: unknown
+    unit: null
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-c-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-c-cooling_water_reuse-1
+    claim_type: cooling_water_reuse
+    value: unknown
+    unit: null
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-c-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."

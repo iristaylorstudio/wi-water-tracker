@@ -1,0 +1,10 @@
+facility: example-city-c
+events:
+  - id: example-city-c-2026-08-11-hearing
+    date: 2026-08-11
+    type: hearing
+    title: Council hears first presentation
+    body: Example Developer C presented the project to the Common Council. No vote was taken.
+    outcome: no vote
+    source: example-city-c-2026-08-11-council-agenda
+    evidence_type: government_record

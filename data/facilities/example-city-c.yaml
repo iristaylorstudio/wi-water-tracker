@@ -1,0 +1,31 @@
+id: example-city-c
+name: Example City C Data Center
+aliases: []
+developer: Example Developer C
+operator: unknown
+status: announced
+
+location:
+  address: unknown
+  city: Example City C
+  county: Example County C
+  lat: 45.18
+  lng: -91.20
+
+jurisdiction:
+  municipality: City of Example City C
+  agenda_url: unknown
+
+utility:
+  electric: unknown
+  water: unknown
+
+dockets: []
+
+watershed:
+  basin: unknown
+  wri_water_stress: unknown
+
+first_seen: 2026-09-27
+last_reviewed: 2026-09-27
+notes: "EXAMPLE – delete before publish"
