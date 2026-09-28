@@ -122,6 +122,19 @@ Rules for the agent:
 
 A GitHub Action on a schedule that runs the same research and opens a pull request with proposed YAML changes. You merge or reject. Same rules as Level 2. The PR is the review step.
 
+## Learning track
+
+Docs I write myself, one at a time. I will need a brief from claude to understand what I should be writing and why. Then I do the Draft rough, send for review, then the next one.
+
+1. Research note for the first real facility. What I found, where, what date, what is unclear.
+2. Explainer page: "What a data you center actually uses." Every number carries a source.
+3. Update-agent prompt. What to do, what never to do, what done looks like.
+
+How I review Claude Code reports:
+- "What I built" is a receipt. Skim it.
+- "Things I wasn't sure about" is where the decisions are.
+- Three questions: Does it match SCHEMA.md? Does it change what a resident sees? Is it easy to undo?
+
 ## Go/no-go signals
 
 After Sprint 1 and one month live:
@@ -131,8 +144,8 @@ After Sprint 1 and one month live:
 - Rethink: the water layer is almost entirely unknown after working three dockets. Then the honest product is the explainers plus a "what is not disclosed" page, and the tracker is the evidence for it
 - Stop: a month of no traffic and no submissions after direct outreach
 
-## Working across two devices
+## Repo habits
 
-Everything lives in one GitHub repo. Before editing on either machine, pull. Data files are the source of truth. Nothing lives only in a local spreadsheet.
+Iris is working on One computer since this is a personal project. Everything lives in the GitHub repo. Push origin in GitHub Desktop at the end of every session. Data files are the source of truth.
 
 Source documents (downloaded filings, PDFs, screenshots, spreadsheets) do not go in the repo. Keep them in a synced cloud folder (Google Drive or OneDrive) named the same as the repo plus `-files`, one subfolder per facility id. Link to the public URL from the source record. If the public URL might disappear, save a Wayback snapshot and store the archive URL in `archived_url`.
