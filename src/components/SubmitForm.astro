@@ -1,5 +1,8 @@
 ---
-// Placeholder. Step 7 of KICKOFF_PROMPT.md replaces this with the Tally embed.
+// Embeds the Tally submission form from PUBLIC_TALLY_FORM_URL.
+// On a facility page, the facility id is passed to the form's hidden field
+// named `facility` through Tally's URL parameters. The Tally form needs a
+// hidden field with exactly that name.
 
 interface Props {
   /** Facility id to prefill, or omit for the general form. */
@@ -7,8 +10,85 @@ interface Props {
 }
 
 const { facilityId } = Astro.props;
+
+const HIDDEN_FIELD = 'facility';
+const formUrl = import.meta.env.PUBLIC_TALLY_FORM_URL?.trim();
+
+/** Accepts a share link (tally.so/r/ID), an embed link (tally.so/embed/ID) or a bare form id. */
+function embedSrc(raw: string): string | null {
+  const id = raw.match(/^[\w-]+$/)?.[0] ?? raw.match(/tally\.so\/(?:r|embed)\/([\w-]+)/)?.[1];
+  if (!id) return null;
+  const params = new URLSearchParams({
+    alignLeft: '1',
+    hideTitle: '1',
+    transparentBackground: '1',
+    dynamicHeight: '1',
+  });
+  if (facilityId) params.set(HIDDEN_FIELD, facilityId);
+  return `https://tally.so/embed/${id}?${params}`;
+}
+
+const src = formUrl ? embedSrc(formUrl) : null;
 ---
 
-<div class="submit-form" data-facility={facilityId}>
-  <p class="muted">The submission form is not configured yet.</p>
-</div>
+{
+  src ? (
+    <div class="submit-form">
+      <iframe
+        data-tally-src={src}
+        loading="lazy"
+        width="100%"
+        height="600"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        title="Submission form"
+      />
+      <noscript>
+        <a href={src}>Open the submission form</a>
+      </noscript>
+    </div>
+  ) : (
+    <div class="submit-form placeholder">
+      <p>The submission form is not configured yet.</p>
+    </div>
+  )
+}
+
+{
+  src && (
+    <script is:inline>
+      // Tally's embed loader resizes the form to fit. If it fails to load, show the form at a fixed height.
+      (function () {
+        var show = function () {
+          if (typeof Tally !== 'undefined') return Tally.loadEmbeds();
+          document.querySelectorAll('iframe[data-tally-src]:not([src])').forEach(function (el) {
+            el.src = el.dataset.tallySrc;
+          });
+        };
+        if (document.querySelector('script[src="https://tally.so/widgets/embed.js"]')) return show();
+        var s = document.createElement('script');
+        s.src = 'https://tally.so/widgets/embed.js';
+        s.onload = show;
+        s.onerror = show;
+        document.body.appendChild(s);
+      })();
+    </script>
+  )
+}
+
+<style>
+  .submit-form {
+    max-width: 42rem;
+    margin-top: 1rem;
+  }
+  .placeholder {
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    padding: 1rem;
+    color: var(--muted);
+  }
+  .placeholder p {
+    margin: 0;
+  }
+</style>
