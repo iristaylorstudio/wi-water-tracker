@@ -5,7 +5,12 @@ import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
 import EventTimeline from '../../components/EventTimeline.astro';
 import SubmitForm from '../../components/SubmitForm.astro';
 import { loadData, type Facility, type Source } from '../../lib/loadData';
-import { facilityWaterConfidence, undisclosedWaterTypes, WATER_CLAIM_TYPES } from '../../lib/confidence';
+import {
+  facilityWaterConfidence,
+  isUnknownClaim,
+  undisclosedWaterTypes,
+  WATER_CLAIM_TYPES,
+} from '../../lib/confidence';
 import { CLAIM_TYPE_HELP, CLAIM_TYPE_LABELS, STATUS_LABELS } from '../../lib/labels';
 import { formatDate } from '../../lib/format';
 import { url } from '../../lib/paths';
@@ -25,6 +30,9 @@ const events = data.events.get(facility.id) ?? [];
 
 const confidence = facilityWaterConfidence(claims);
 const undisclosed = undisclosedWaterTypes(claims);
+
+// Unknown water claims are listed once, under "What is not disclosed". Other unknowns stay in the table.
+const tableClaims = claims.filter((c) => !(WATER_CLAIM_TYPES.includes(c.claim_type) && isUnknownClaim(c)));
 
 // Every source a claim or event on this page cites, newest first.
 const sourceIds = new Set([...claims.map((c) => c.source), ...events.map((e) => e.source)]);
@@ -55,7 +63,13 @@ const pageSources = [...sourceIds]
   <p class="muted section-note">
     Each figure shows its evidence type, meaning what kind of record it came from, and the date it was stated.
   </p>
-  {claims.length > 0 ? <ClaimTable claims={claims} sources={data.sources} /> : <p class="muted">No claims recorded yet.</p>}
+  {
+    tableClaims.length > 0 ? (
+      <ClaimTable claims={tableClaims} sources={data.sources} />
+    ) : (
+      <p class="muted">No public figures recorded yet. See what is not disclosed below.</p>
+    )
+  }
 
   <h2>What is not disclosed</h2>
   {
