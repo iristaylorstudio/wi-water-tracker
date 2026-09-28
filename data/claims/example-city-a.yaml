@@ -1,0 +1,74 @@
+facility: example-city-a
+claims:
+  - id: example-city-a-power_capacity_mw-1
+    claim_type: power_capacity_mw
+    value: 300
+    unit: MW
+    qualifier: at full build-out
+    as_of: 2026-06-01
+    source: example-news-2026-06-01-city-a-power
+    evidence_type: reported
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: ""
+  - id: example-city-a-water_withdrawal_gpd-1
+    claim_type: water_withdrawal_gpd
+    value: 450000
+    unit: gpd
+    qualifier: peak
+    as_of: 2026-03-10
+    source: example-psc-2026-03-10-city-a-water-application
+    evidence_type: filing
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: ""
+  - id: example-city-a-water_source-1
+    claim_type: water_source
+    value: Example City A Water Utility
+    unit: null
+    qualifier: ""
+    as_of: 2026-03-10
+    source: example-psc-2026-03-10-city-a-water-application
+    evidence_type: filing
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: ""
+  - id: example-city-a-cooling_type-1
+    claim_type: cooling_type
+    value: hybrid
+    unit: null
+    qualifier: ""
+    as_of: 2026-05-14
+    source: example-city-a-2026-05-14-plan-commission-minutes
+    evidence_type: government_record
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: ""
+  - id: example-city-a-water_consumption_gpd-1
+    claim_type: water_consumption_gpd
+    value: unknown
+    unit: gpd
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-a-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-a-cooling_water_reuse-1
+    claim_type: cooling_water_reuse
+    value: unknown
+    unit: null
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-a-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."

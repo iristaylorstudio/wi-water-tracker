@@ -1,0 +1,18 @@
+facility: example-city-a
+events:
+  - id: example-city-a-2026-03-10-filing
+    date: 2026-03-10
+    type: filing
+    title: Water service application filed
+    body: Example Developer A filed an application for water service from the city utility.
+    outcome: null
+    source: example-psc-2026-03-10-city-a-water-application
+    evidence_type: filing
+  - id: example-city-a-2026-05-14-vote
+    date: 2026-05-14
+    type: vote
+    title: Plan Commission approves site plan
+    body: The commission voted 5–2 to approve the site plan.
+    outcome: approved
+    source: example-city-a-2026-05-14-plan-commission-minutes
+    evidence_type: government_record
