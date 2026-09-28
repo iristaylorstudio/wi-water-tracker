@@ -1,0 +1,31 @@
+id: example-city-d
+name: Example City D Data Center
+aliases: []
+developer: Example Developer D
+operator: unknown
+status: proposal_pending
+
+location:
+  address: unknown
+  city: Example City D
+  county: Example County D
+  lat: 42.95
+  lng: -88.55
+
+jurisdiction:
+  municipality: Village of Example City D
+  agenda_url: unknown
+
+utility:
+  electric: unknown
+  water: unknown
+
+dockets: []
+
+watershed:
+  basin: unknown
+  wri_water_stress: unknown
+
+first_seen: 2026-09-27
+last_reviewed: 2026-09-27
+notes: "EXAMPLE – delete before publish"

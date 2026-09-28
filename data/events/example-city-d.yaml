@@ -1,0 +1,10 @@
+facility: example-city-d
+events:
+  - id: example-city-d-2026-02-18-announcement
+    date: 2026-02-18
+    type: announcement
+    title: Developer posts project site
+    body: Example Developer D published a project page for a proposed campus in Example City D.
+    outcome: null
+    source: example-developer-d-2026-02-18-project-site
+    evidence_type: company_statement

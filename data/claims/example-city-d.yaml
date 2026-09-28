@@ -1,0 +1,62 @@
+facility: example-city-d
+claims:
+  - id: example-city-d-water_source-1
+    claim_type: water_source
+    value: Example City D Water Utility
+    unit: null
+    qualifier: ""
+    as_of: 2026-02-18
+    source: example-developer-d-2026-02-18-project-site
+    evidence_type: company_statement
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: ""
+  - id: example-city-d-cooling_type-1
+    claim_type: cooling_type
+    value: air
+    unit: null
+    qualifier: ""
+    as_of: 2026-08-30
+    source: example-news-2026-08-30-city-d-cooling
+    evidence_type: reported
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: ""
+  - id: example-city-d-water_withdrawal_gpd-1
+    claim_type: water_withdrawal_gpd
+    value: unknown
+    unit: gpd
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-d-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-d-water_consumption_gpd-1
+    claim_type: water_consumption_gpd
+    value: unknown
+    unit: gpd
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-d-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
+  - id: example-city-d-cooling_water_reuse-1
+    claim_type: cooling_water_reuse
+    value: unknown
+    unit: null
+    qualifier: ""
+    as_of: null
+    source: tracker-2026-09-27-city-d-no-disclosure
+    evidence_type: unknown
+    method: null
+    conflicts_with: []
+    superseded_by: null
+    notes: "No figure in any public record as of last_reviewed."
