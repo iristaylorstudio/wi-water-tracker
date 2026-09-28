@@ -29,7 +29,7 @@ const { pins } = Astro.props;
   >
   </div>
   <div class="legend">
-    <span class="legend-title">Water confidence</span>
+    <span class="legend-title">How well documented</span>
     {
       CONFIDENCE_LEVELS.map((level) => (
         <span class="legend-item">
@@ -82,6 +82,8 @@ const { pins } = Astro.props;
     const pins: Pin[] = JSON.parse(container.dataset.pins ?? '[]');
     const colors: Record<string, string> = JSON.parse(container.dataset.colors ?? '{}');
 
+    // Basemap: OpenStreetMap raster tiles for now. This will be replaced later with a
+    // self-hosted outline map drawn from Census county boundaries.
     const map = new maplibregl.Map({
       container,
       bounds: WISCONSIN,

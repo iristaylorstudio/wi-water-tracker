@@ -19,11 +19,14 @@ const RANK: Record<Confidence, number> = { None: 0, Low: 1, Medium: 2, High: 3 }
 
 const FRESH_MONTHS = 18;
 
-/** Display colors, shared by map pins and badges. None is gray: nothing to grade. */
+/**
+ * Display colors, shared by map pins and badges. One blue ramp: darker is better
+ * documented. None is gray because there is nothing to grade. Always show the word too.
+ */
 export const CONFIDENCE_COLORS: Record<Confidence, string> = {
-  High: '#1b6b47',
-  Medium: '#5e9e6e',
-  Low: '#d49a1f',
+  High: '#0b3c78',
+  Medium: '#3a7bbf',
+  Low: '#a9cbea',
   None: '#8a8f94',
 };
 
